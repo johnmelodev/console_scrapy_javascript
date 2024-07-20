@@ -1,5 +1,3 @@
-crie um output csv para o meu codigo javascript. com os seguintes parametros size price e location
-
 var xpath = "(//img[@alt])[position() >= 7]";
 var result = [];
 var nodesSnapshot = document.evaluate(xpath, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null );
@@ -17,4 +15,28 @@ for ( var i=0 ; i < nodesSnapshot.snapshotLength; i++ ){
     };
     result.push(parameters);
 }
-console.log(result);
+
+// Function to convert an array of objects to CSV
+function arrayToCSV(objArray) {
+    const array = typeof objArray !== 'object' ? JSON.parse(objArray) : objArray;
+    let str = `${Object.keys(array[0]).map(value => `"${value}"`).join(",")}` + '\r\n';
+
+    return array.reduce((str, next) => {
+        str += `${Object.values(next).map(value => `"${value}"`).join(",")}` + '\r\n';
+        return str;
+    }, str);
+}
+
+// Convert the result to CSV
+var csv = arrayToCSV(result);
+
+// Create a downloadable link
+var downloadLink = document.createElement("a");
+var blob = new Blob(["\ufeff", csv]);
+var url = URL.createObjectURL(blob);
+downloadLink.href = url;
+downloadLink.download = "data.csv";  // Name the file here
+
+document.body.appendChild(downloadLink);
+downloadLink.click();
+document.body.removeChild(downloadLink);
